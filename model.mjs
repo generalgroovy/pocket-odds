@@ -20,3 +20,12 @@ export function bestChance(bags,needed,left,memo=new Map()){
  let best=0;for(let b=0;b<bags.length;b++){const count=total(bags[b]);if(!count)continue;let chance=0;for(let c=0;c<3;c++){if(!bags[b][c])continue;const next=bags.map(x=>[...x]);next[b][c]--;const need=[...needed];need[c]=Math.max(0,need[c]-1);chance+=bags[b][c]/count*bestChance(next,need,left-1,memo);}best=Math.max(best,chance);}
  memo.set(key,best);return best;
 }
+
+export function takeTurn(session){
+ const state=draw(session.state,session.selected);if(state===session.state)return session;
+ return {...session,state,history:[...session.history,{state:session.state,selected:session.selected}]};
+}
+export function undoTurn(session){
+ if(!session.history.length)return session;
+ return {...session,...session.history.at(-1),history:session.history.slice(0,-1)};
+}
